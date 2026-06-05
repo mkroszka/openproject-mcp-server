@@ -46,6 +46,15 @@ class OpenProjectClient:
             "User-Agent": f"OpenProject-MCP/{__version__}",
         }
 
+        # [sector-primus local patch] Cloudflare Access Service Token headers.
+        # OP API jest za CF Access — bot uwierzytelnia się przez service token.
+        cf_client_id = os.getenv("CF_ACCESS_CLIENT_ID")
+        cf_client_secret = os.getenv("CF_ACCESS_CLIENT_SECRET")
+        if cf_client_id and cf_client_secret:
+            self.headers["CF-Access-Client-Id"] = cf_client_id
+            self.headers["CF-Access-Client-Secret"] = cf_client_secret
+            logger.info("Cloudflare Access service token configured")
+
         logger.info(f"OpenProject Client initialized for: {self.base_url}")
         if self.proxy:
             logger.info(f"Using proxy: {self.proxy}")

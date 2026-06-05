@@ -582,6 +582,28 @@ async def delete_work_package(work_package_id: int) -> str:
 
 
 @mcp.tool
+async def get_work_package(work_package_id: int) -> str:
+    """Get full details of a specific work package, including the complete description.
+
+    Use this when you need the full body of a work package (description, requirements,
+    acceptance criteria), not just the summary returned by list/search tools. Returns
+    raw markdown description without truncation.
+
+    Args:
+        work_package_id: ID of the work package to fetch
+
+    Returns:
+        Formatted work package details with full description
+    """
+    try:
+        client = get_client()
+        wp = await client.get_work_package(work_package_id)
+        return format_work_package_detail(wp)
+    except Exception as e:
+        return format_error(f"Failed to get work package #{work_package_id}: {str(e)}")
+
+
+@mcp.tool
 async def list_types(project_id: Optional[int] = None) -> str:
     """List available work package types (Bug, Task, Feature, etc.).
 
@@ -869,16 +891,12 @@ async def list_work_package_activities(work_package_id: int) -> str:
             text += f"  By: {user_name}\n"
             text += f"  Date: {created_at}\n"
 
-            # Show comment if available
+            # Show comment if available (full body, no truncation — agents need to read full discussions)
             comment_data = activity.get("comment", {})
             if comment_data:
                 comment_raw = comment_data.get("raw", "")
                 if comment_raw:
-                    # Truncate long comments
-                    comment_preview = comment_raw[:150]
-                    if len(comment_raw) > 150:
-                        comment_preview += "..."
-                    text += f"  Comment: {comment_preview}\n"
+                    text += f"  Comment:\n{comment_raw}\n"
 
             # Show if internal
             if activity.get("internal"):
