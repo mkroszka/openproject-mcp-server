@@ -278,6 +278,12 @@ class OpenProjectClient:
             payload["_links"]["assignee"] = {
                 "href": f"/api/v3/users/{data['assignee_id']}"
             }
+        if "responsible_id" in data:
+            if "_links" not in payload:
+                payload["_links"] = {}
+            payload["_links"]["responsible"] = {
+                "href": f"/api/v3/users/{data['responsible_id']}"
+            }
         if "version_id" in data:
             if "_links" not in payload:
                 payload["_links"] = {}
@@ -483,6 +489,12 @@ class OpenProjectClient:
                 payload["_links"] = {}
             payload["_links"]["assignee"] = {
                 "href": f"/api/v3/users/{data['assignee_id']}"
+            }
+        if "responsible_id" in data:
+            if "_links" not in payload:
+                payload["_links"] = {}
+            payload["_links"]["responsible"] = {
+                "href": f"/api/v3/users/{data['responsible_id']}"
             }
         if "version_id" in data:
             if "_links" not in payload:

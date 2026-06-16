@@ -191,6 +191,13 @@ def format_work_package_detail(wp: Dict) -> str:
     else:
         text += f"**Assignee**: Unassigned\n"
 
+    # Responsible (accountable) is in _links
+    responsible_link = links.get("responsible")
+    if responsible_link and responsible_link.get("href"):
+        text += f"**Responsible**: {responsible_link.get('title', 'Unknown')}\n"
+    else:
+        text += f"**Responsible**: None\n"
+
     # Dates
     if wp.get('startDate'):
         text += f"**Start Date**: {wp['startDate']}\n"
